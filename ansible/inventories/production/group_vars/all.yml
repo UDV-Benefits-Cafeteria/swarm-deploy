@@ -1,0 +1,12 @@
+# Docker
+docker_version: "24.0"
+docker_compose_version: "v2.23.0"
+
+# Swarm
+swarm_manager_ip: "manager_ip"
+swarm_join_token: ""  # Заполнится автоматически
+
+# Приложение
+app_name: "dpo"
+app_stack_file: "../../../docker-stack.yml"
+env_file: "../../../.env"

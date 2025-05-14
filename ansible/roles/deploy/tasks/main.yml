@@ -1,0 +1,12 @@
+- name: Копирование файлов на сервер
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/{{ app_name }}/"
+  loop:
+    - "{{ app_stack_file }}"
+    - "{{ env_file }}"
+
+- name: Деплой стека
+  command: "docker stack deploy -c /opt/{{ app_name }}/{{ app_stack_file }} {{ app_name }}"
+  args:
+    chdir: "/opt/{{ app_name }}"

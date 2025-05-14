@@ -1,0 +1,12 @@
+- name: Настройка Docker Swarm кластера
+  hosts: swarm
+  become: true
+  roles:
+    - role: docker
+    - role: swarm
+
+- name: Деплой приложения
+  hosts: manager
+  become: true
+  roles:
+    - role: deploy

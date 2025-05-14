@@ -1,0 +1,19 @@
+- name: Инициализация Swarm (менеджер)
+  command: "docker swarm init --advertise-addr {{ swarm_manager_ip }}"
+  when: inventory_hostname in groups['manager']
+  register: swarm_init
+
+- name: Получение токена для присоединения воркеров
+  command: "docker swarm join-token -q worker"
+  when: inventory_hostname in groups['manager']
+  register: swarm_token
+  changed_when: false
+
+- name: Сохранение токена в переменные
+  set_fact:
+    swarm_join_token: "{{ swarm_token.stdout }}"
+  when: inventory_hostname in groups['manager']
+
+- name: Присоединение воркеров к Swarm
+  command: "docker swarm join --token {{ swarm_join_token }} {{ swarm_manager_ip }}:2377"
+  when: inventory_hostname in groups['workers']
