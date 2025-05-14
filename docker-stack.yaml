@@ -71,13 +71,22 @@ services:
         - "traefik.http.routers.backend.entrypoints=websecure"
         - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
         - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 120s
+        order: stop-first
+        failure_action: rollback
+        monitor: 30s
+      rollback_config:
+        parallelism: 0
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
     depends_on:
-      db:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - elasticsearch
+      - redis
     restart: unless-stopped
 
   # ==================== Frontend (Vite) ====================
@@ -93,6 +102,18 @@ services:
         - "traefik.http.routers.frontend.entrypoints=websecure"
         - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
         - "traefik.http.services.frontend.loadbalancer.server.port=5000"
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 120s
+        order: stop-first
+        failure_action: rollback
+        monitor: 30s
+      rollback_config:
+        parallelism: 0
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
     restart: unless-stopped
 
   # ==================== PostgreSQL ====================
